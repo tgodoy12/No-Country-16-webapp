@@ -1,7 +1,8 @@
 # Portal Web de Coordinación de Citas y Teleasistencia  
 
 **Vertical:** Web App  
-**Sector de Negocio:** HealthTech 
+**Sector de Negocio:** HealthTech
+
 **Equipo:** 16
 
 **Miembros:**
