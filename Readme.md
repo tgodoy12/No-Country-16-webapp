@@ -8,7 +8,7 @@
 - Pamela Pilotti - *Project Manager*
 - Abel Ignacio Leiva - *Full Stack Developer*
 - Diego Jorges - *Backend Developer*
-- Cristian Albornoz *Backend Developer*
+- Cristian Albornoz - *Backend Developer*
 - Lautaro Cabrier - *QA Tester*
 - Facundo Carabajal - *Frontend Developer*
 - Trilce Godoy - *Backend Developer*
