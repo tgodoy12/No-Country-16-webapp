@@ -1,14 +1,15 @@
 # Portal Web de Coordinación de Citas y Teleasistencia  
 
 **Vertical:** Web App  
-**Sector de Negocio:** HealthTech 
+**Sector de Negocio:** HealthTech
+
 **Equipo:** 16
 
 **Miembros:**
 - Pamela Pilotti - *Project Manager*
 - Abel Ignacio Leiva - *Full Stack Developer*
 - Diego Jorges - *Backend Developer*
-- Cristian Albornoz *Backend Developer*
+- Cristian Albornoz - *Backend Developer*
 - Lautaro Cabrier - *QA Tester*
 - Facundo Carabajal - *Frontend Developer*
 - Trilce Godoy - *Backend Developer*
