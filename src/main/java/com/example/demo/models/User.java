@@ -52,17 +52,14 @@ public abstract class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // 🚨 CORRECCIÓN: Usamos Collections.singletonList para asegurar la compatibilidad de tipo
         return Collections.singletonList(new SimpleGrantedAuthority(role.name()));
     }
 
-    // Retorna el campo usado para el login (nuestro email)
     @Override
     public String getUsername() {
         return email;
     }
 
-    // Métodos para el estado de la cuenta (los ponemos en true por defecto para el MVP)
     @Override
     public boolean isAccountNonExpired() {
         return true;
