@@ -53,8 +53,8 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/auth/register").permitAll()
 
-                        .requestMatchers("/patient/**").hasRole("PATIENT")
-                        .requestMatchers("/doctor/**").hasRole("DOCTOR")
+                        .requestMatchers("/patient/**").hasRole("ROLE_PATIENT")
+                        .requestMatchers("/doctor/**").hasRole("ROLE_DOCTOR")
 
                         .anyRequest().authenticated()
                 );
