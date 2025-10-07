@@ -69,6 +69,18 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+        <!-- DEPENDENCIAS AGREGADAS -->
+        <!--FLYWAY PARA MIGRACIONES EN CASO DE NECESITAR ALGUN CAMBIO EN LA BASE DE DATSO -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-mysql -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-mysql</artifactId>
+            <version>11.13.2</version>
+        </dependency>
 	</dependencies>
 
 	<build>
