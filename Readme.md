@@ -1,75 +1,257 @@
-# Portal Web de Coordinación de Citas y Teleasistencia
+# 🏥 Portal Web de Coordinación de Citas y Teleasistencia
 
 **Vertical:** Web App  
-**Sector de Negocio:** HealthTech
+**Sector de Negocio:** HealthTech  
+**Equipo:** 16  
 
-**Equipo :** 16
-
-**Miembros:**
-
-- Pamela Pilotti - _Project Manager_
-- Cristian Albornoz - _Backend Developer_
-- David Merbello - _Backend Developer_
+### 👥 Miembros del Equipo
+- **Pamela Pilotti** – Project Manager  
+- **Cristian Albornoz** – Backend Developer  
+- **David Merbello** – Backend Developer  
 
 ---
 
-## Necesidad del cliente
+# 🏥 HealthTech - Backend del Sistema de Telemedicina
 
-Clínicas y centros de salud necesitan gestionar:
+## 📋 Descripción
 
-- Citas presenciales y virtuales.
-- Historiales médicos.
-- Comunicación con pacientes.
-
-Muchos sistemas existentes son fragmentados y generan duplicación de datos y errores de agenda.
+Backend completo para un sistema de telemedicina que permite la **gestión de citas médicas**, **videoconsultas** y **comunicación entre pacientes y doctores**.  
+Desarrollado con **Spring Boot 3.2** y **Java 17** para garantizar escalabilidad, seguridad y rendimiento.
 
 ---
 
-## Validación de mercado
+## 🚀 Características Principales
 
-En la guía de desarrollo de apps para salud se destacan como claves para el éxito:
+### ✅ Funcionalidades Implementadas
 
-- Interoperabilidad con sistemas EHR.
-- Seguridad de los datos.
-- Experiencia de usuario.
-
-Además, el **60 % de los hospitales** están adoptando herramientas predictivas y de gestión remota, lo que indica un mercado creciente para plataformas que integren teleasistencia y agendas médicas.
-
----
-
-## Expectativa
-
-Crear un portal web donde:
-
-- **Pacientes** puedan agendar y modificar citas presenciales o virtuales, recibir recordatorios y acceder a su historial clínico.
-- **Médicos** administren su agenda, consulten historiales y lancen teleconsultas.
-
-Debe integrarse con servicios de videollamada y con los sistemas de historia clínica existentes.
+- **👥 Gestión de Usuarios:** Registro y autenticación con JWT  
+- **📅 Sistema de Citas Inteligente:** Validación de horarios y disponibilidad  
+- **🎥 Videollamadas Integradas:** WebRTC con salas privadas  
+- **💬 Chat en Tiempo Real:** Comunicación directa durante la consulta  
+- **📧 Notificaciones Automáticas:** Emails con confirmaciones y recordatorios  
+- **🛡️ Seguridad Robusta:** Spring Security con roles y permisos  
+- **🏥 Historial Médico:** Gestión de registros médicos  
 
 ---
 
-## Entregables deseados
+## 🏗️ Arquitectura Técnica
 
-- Aplicación web responsive para pacientes y profesionales.
-- Sistema de autenticación multifactor y control de permisos.
-- Integraciones con herramientas de videollamada y calendarios (WebRTC/Zoom/Google Calendar).
-- Manual de implementación y guía de usuario para personal clínico.
+| Tecnología | Versión | Propósito |
+|------------|---------|-----------|
+| Java | 17 | Lenguaje principal |
+| Spring Boot | 3.2.0 | Framework backend |
+| Spring Security | 6.2.0 | Autenticación y autorización |
+| JWT | 0.11.5 | Tokens de seguridad |
+| MySQL | 8.0 | Base de datos principal |
+| H2 Database | 2.2.220 | Base de datos desarrollo |
+| WebSocket | - | Comunicación tiempo real |
+| Gradle | 8.4 | Gestión de dependencias |
+| Lombok | - | Reducción de código repetitivo |
+
+**Patrones de Diseño:**  
+`MVC`, `DTO`, `Repository`, `Service Layer`, `JWT Authentication`
 
 ---
 
-## Funcionalidades
+## 📁 Estructura del Proyecto
 
-### Must-have
+```
+src/main/java/com/healthtech/
+├── config/
+├── controller/
+├── entity/
+├── repository/
+├── service/
+├── security/
+└── dto/
+```
 
-- Registro de pacientes y autenticación segura.
-- Gestión de citas con disponibilidad en tiempo real.
-- Recordatorios automáticos vía correo/SMS.
-- Teleconsulta con video y chat seguro.
-- Integración con sistemas EHR (FHIR) para leer/escribir datos.
+---
 
-### Nice-to-have
+## 🔌 API Documentation
 
-- Algoritmo de asignación de citas según prioridad médica.
-- Módulo de facturación automática por sesión.
-- Panel de gestión de listas de espera y redistribución de citas.
-- Análisis de datos para predecir cancelaciones y _no-shows_.
+### Autenticación
+
+#### Registrar Usuario
+```http
+POST /api/auth/register
+```
+```json
+{
+  "email": "usuario@healthtech.com",
+  "password": "password123",
+  "firstName": "Juan",
+  "lastName": "Pérez",
+  "phone": "+1234567890",
+  "role": "PATIENT"
+}
+```
+
+#### Iniciar Sesión
+```http
+POST /api/auth/login
+```
+
+---
+
+### Gestión de Citas
+
+#### Crear Cita
+```http
+POST /api/appointments
+Authorization: Bearer <jwt-token>
+```
+```json
+{
+  "doctorId": 1,
+  "patientId": 1,
+  "appointmentDateTime": "2024-12-15T10:00:00",
+  "type": "VIRTUAL",
+  "reason": "Consulta general",
+  "symptoms": "Dolor de cabeza"
+}
+```
+
+#### Obtener Citas del Paciente
+```http
+GET /api/appointments/patient/1
+Authorization: Bearer <jwt-token>
+```
+
+---
+
+### Videollamadas
+```http
+POST /api/video-call/{appointmentId}/start
+POST /api/video-call/{meetingId}/end
+```
+
+---
+
+### Doctores
+```http
+GET /api/doctors
+GET /api/doctors/specialization/{especialidad}
+```
+
+---
+
+## 🛠️ Instalación y Configuración
+
+### Prerrequisitos
+- Java 17+
+- MySQL 8+
+- Gradle 8.4+
+
+### Pasos
+
+```bash
+git clone <repository-url>
+cd teleasistencia-mvp
+```
+
+Crear base de datos:
+```sql
+CREATE DATABASE teleasistencia;
+```
+
+Configurar `application-dev.yml`:
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/teleasistencia
+    username: your_username
+    password: your_password
+```
+
+Ejecutar:
+```bash
+./gradlew bootRun
+```
+
+Verificar:
+```bash
+curl http://localhost:8080/api/auth/health
+```
+
+---
+
+## 🧪 Testing
+
+1. Registrar usuario  
+2. Iniciar sesión y guardar token JWT  
+3. Crear cita  
+4. Probar videollamada  
+
+Colección Postman disponible en `/postman/`
+
+---
+
+## 🔒 Seguridad
+
+- Autenticación JWT  
+- Roles: `ROLE_PATIENT`, `ROLE_DOCTOR`, `ROLE_ADMIN`  
+- BCrypt para contraseñas  
+- CORS configurado  
+- Validación de entrada  
+
+---
+
+## 🚀 Despliegue
+
+### Desarrollo
+```bash
+./gradlew bootRun
+```
+
+### Producción
+```bash
+./gradlew clean build
+java -jar build/libs/teleasistencia-mvp.jar
+```
+
+---
+
+## 📊 Estado del Proyecto
+
+| Estado | Funcionalidad |
+|--------|----------------|
+| ✅ | Autenticación y usuarios |
+| ✅ | Sistema de citas |
+| ✅ | Videollamadas WebRTC |
+| ✅ | Chat en tiempo real |
+| ✅ | Emails automáticos |
+| 🔄 | Frontend React |
+| 🔄 | Integración EHR |
+| 🔄 | Panel administrativo |
+
+---
+
+## 🤝 Contribución
+
+1. Fork del proyecto  
+2. Crear rama `feature/...`  
+3. Commit y push  
+4. Pull Request  
+
+---
+
+## 📝 Licencia
+
+Este proyecto está bajo la **Licencia MIT**.  
+Consulta el archivo `LICENSE` para más detalles.
+
+---
+
+## 📞 Soporte
+
+1. Revisar documentación de APIs  
+2. Ver logs de aplicación  
+3. Usar ejemplos en Postman  
+4. Crear un issue en el repositorio  
+
+---
+
+## 💡 Equipo HealthTech
+
+Desarrollado con ❤️ por el equipo HealthTech para revolucionar la atención médica digital.
