@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🧪 WebSocket Test - HealthTech</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .button {
+            background: #4CAF50; color: white; border: none;
+            padding: 10px 15px; margin: 5px; cursor: pointer; border-radius: 5px;
+        }
+        .button:hover { background: #45a049; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .connected { background: #d4edda; color: #155724; }
+        .disconnected { background: #f8d7da; color: #721c24; }
+        #messages {
+            border: 1px solid #ccc; height: 300px; overflow-y: scroll;
+            padding: 10px; margin: 10px 0; background: #f9f9f9;
+        }
+        .message { margin: 5px 0; padding: 5px; border-left: 3px solid #007bff; }
+        .system { border-left-color: #28a745; background: #f0fff0; }
+        .error { border-left-color: #dc3545; background: #fff0f0; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🧪 HealthTech - Prueba WebSocket & Videollamadas</h1>
+
+    <div class="controls">
+        <button class="button" onclick="connectWebSocket()">🔗 Conectar WebSocket</button>
+        <button class="button" onclick="testVideoCall()">🎥 Probar Videollamada</button>
+        <button class="button" onclick="sendTestMessage()">💬 Enviar Mensaje Chat</button>
+        <button class="button" onclick="testWebRTCSignal()">📡 Probar Señal WebRTC</button>
+    </div>
+
+    <div id="status" class="status disconnected">Estado: Desconectado</div>
+
+    <div>
+        <h3>Meeting ID: <span id="meetingId">-</span></h3>
+    </div>
+
+    <div id="messages"></div>
+
+    <div>
+        <input type="text" id="chatInput" placeholder="Escribe un mensaje..." style="width: 300px; padding: 8px;">
+        <button class="button" onclick="sendCustomMessage()">Enviar Mensaje</button>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script>
+    let stompClient = null;
+    let meetingId = null;
+    let currentMeetingId = null;
+
+    function connectWebSocket() {
+        const socket = new WebSocket('ws://localhost:8080/ws');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function(frame) {
+            document.getElementById('status').innerHTML = 'Estado: <strong>✅ CONECTADO</strong>';
+            document.getElementById('status').className = 'status connected';
+            logMessage('🔗 WebSocket conectado correctamente', 'system');
+            logMessage('ID Sesión: ' + frame.headers['user-name'], 'system');
+
+            // Suscribirse a logs generales
+            stompClient.subscribe('/topic/logs', function(message) {
+                logMessage('📢 ' + message.body, 'system');
+            });
+
+        }, function(error) {
+            document.getElementById('status').innerHTML = 'Estado: <strong>❌ ERROR</strong>';
+            document.getElementById('status').className = 'status disconnected';
+            logMessage('❌ Error conectando WebSocket: ' + error, 'error');
+        });
+    }
+
+    function testVideoCall() {
+        fetch('http://localhost:8080/api/test/video-call/quick-start', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                currentMeetingId = data.meetingId;
+                document.getElementById('meetingId').textContent = currentMeetingId;
+
+                logMessage('🎥 Videollamada creada: ' + data.meetingId, 'system');
+                logMessage('📝 ' + data.message, 'system');
+
+                // Suscribirse al chat de esta meeting
+                if (stompClient && stompClient.connected) {
+                    stompClient.subscribe('/topic/chat/' + currentMeetingId, function(message) {
+                        const msg = JSON.parse(message.body);
+                        logMessage('💬 ' + msg.fromUser + ': ' + msg.message, 'system');
+                    });
+
+                    stompClient.subscribe('/topic/video-call/' + currentMeetingId, function(message) {
+                        const msg = JSON.parse(message.body);
+                        logMessage('📹 ' + msg.type + ': ' + JSON.stringify(msg), 'system');
+                    });
+                }
+            } else {
+                logMessage('❌ Error: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            logMessage('❌ Error en la petición: ' + error, 'error');
+        });
+    }
+
+    function sendTestMessage() {
+        if (!stompClient || !stompClient.connected) {
+            logMessage('❌ Primero conecta el WebSocket', 'error');
+            return;
+        }
+
+        if (!currentMeetingId) {
+            logMessage('❌ Primero crea una videollamada', 'error');
+            return;
+        }
+
+        // Enviar mensaje de prueba via REST (más fácil para pruebas)
+        fetch(`http://localhost:8080/api/test/chat/${currentMeetingId}/send?message=Hola, este es un mensaje de prueba`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            logMessage('💬 Mensaje de prueba enviado', 'system');
+        })
+        .catch(error => {
+            logMessage('❌ Error enviando mensaje: ' + error, 'error');
+        });
+    }
+
+    function sendCustomMessage() {
+        const message = document.getElementById('chatInput').value;
+        if (!message.trim()) return;
+
+        if (!stompClient || !stompClient.connected || !currentMeetingId) {
+            logMessage('❌ Conecta WebSocket y crea videollamada primero', 'error');
+            return;
+        }
+
+        fetch(`http://localhost:8080/api/test/chat/${currentMeetingId}/send?message=${encodeURIComponent(message)}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('chatInput').value = '';
+            logMessage('💬 Tú: ' + message, 'system');
+        })
+        .catch(error => {
+            logMessage('❌ Error enviando mensaje: ' + error, 'error');
+        });
+    }
+
+    function testWebRTCSignal() {
+        if (!currentMeetingId) {
+            logMessage('❌ Primero crea una videollamada', 'error');
+            return;
+        }
+
+        fetch(`http://localhost:8080/api/test/video-call/${currentMeetingId}/test-signal`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            logMessage('📡 ' + data.message, 'system');
+        })
+        .catch(error => {
+            logMessage('❌ Error enviando señal: ' + error, 'error');
+        });
+    }
+
+    function logMessage(message, type = '') {
+        const messagesDiv = document.getElementById('messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}`;
+        messageDiv.innerHTML = `<strong>[${new Date().toLocaleTimeString()}]</strong> ${message}`;
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Conectar automáticamente al cargar la página
+    window.onload = function() {
+        logMessage('🔄 Página cargada - Haz clic en "Conectar WebSocket" para empezar', 'system');
+    };
+</script>
+</body>
+</html>

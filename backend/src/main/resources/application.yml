@@ -1,0 +1,35 @@
+spring:
+  profiles:
+    active: dev
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+        show_sql: true
+    show-sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ema9948@gmail.com
+    password: msum ralu dedk dapc
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:mySuperSecretKeyForJWTGenerationInHealthTechApplication2024}
+    expiration: 86400000
+    # Agregar esto en application.yml
+    video-call:
+      base-url: https://meet.healthtech.com
+logging:
+  level:
+    com.healthtech: DEBUG
+    org.springframework.security: INFO
